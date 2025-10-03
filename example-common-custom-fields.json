@@ -1,0 +1,159 @@
+{
+  "_comment": "Example of how the new common custom fields approach works",
+  
+  "api_response_example": {
+    "description": "What the API returns from GET /v1/layouts/leads/system-fields?view=create",
+    "data": [
+      {
+        "id": 301,
+        "type": "TEXT_FIELD",
+        "displayName": "Department Code",
+        "name": "departmentCode",
+        "active": true,
+        "required": false,
+        "standard": false,
+        "internal": false,
+        "picklist": null
+      },
+      {
+        "id": 302,
+        "type": "NUMBER_FIELD",
+        "displayName": "Company Size",
+        "name": "companySize",
+        "active": true,
+        "required": true,
+        "standard": false,
+        "internal": false,
+        "picklist": null
+      },
+      {
+        "id": 303,
+        "type": "PICKLIST",
+        "displayName": "Lead Source",
+        "name": "leadSource",
+        "active": true,
+        "required": false,
+        "standard": false,
+        "internal": false,
+        "picklist": {
+          "id": 15
+        }
+      },
+      {
+        "id": 304,
+        "type": "BOOLEAN_FIELD",
+        "displayName": "Is VIP",
+        "name": "isVip",
+        "active": true,
+        "required": false,
+        "standard": false,
+        "internal": false,
+        "picklist": null
+      },
+      {
+        "id": 305,
+        "type": "DATE_FIELD",
+        "displayName": "Last Contact Date",
+        "name": "lastContactDate",
+        "active": true,
+        "required": false,
+        "standard": false,
+        "internal": false,
+        "picklist": null
+      }
+    ]
+  },
+
+  "dropdown_options_generated": {
+    "description": "What users see in the field dropdown",
+    "options": [
+      {
+        "name": "Department Code (TEXT_FIELD)",
+        "value": "{\"name\":\"departmentCode\",\"type\":\"TEXT_FIELD\",\"required\":false,\"picklist\":null}",
+        "description": "Type: TEXT_FIELD"
+      },
+      {
+        "name": "Company Size (NUMBER_FIELD)",
+        "value": "{\"name\":\"companySize\",\"type\":\"NUMBER_FIELD\",\"required\":true,\"picklist\":null}",
+        "description": "Type: NUMBER_FIELD (Required)"
+      },
+      {
+        "name": "Lead Source (PICKLIST)",
+        "value": "{\"name\":\"leadSource\",\"type\":\"PICKLIST\",\"required\":false,\"picklist\":{\"id\":15}}",
+        "description": "Type: PICKLIST"
+      },
+      {
+        "name": "Is VIP (BOOLEAN_FIELD)",
+        "value": "{\"name\":\"isVip\",\"type\":\"BOOLEAN_FIELD\",\"required\":false,\"picklist\":null}",
+        "description": "Type: BOOLEAN_FIELD"
+      },
+      {
+        "name": "Last Contact Date (DATE_FIELD)",
+        "value": "{\"name\":\"lastContactDate\",\"type\":\"DATE_FIELD\",\"required\":false,\"picklist\":null}",
+        "description": "Type: DATE_FIELD"
+      }
+    ]
+  },
+
+  "user_input_example": {
+    "description": "What the user fills in the n8n form",
+    "customFields": {
+      "customField": [
+        {
+          "fieldName": "{\"name\":\"departmentCode\",\"type\":\"TEXT_FIELD\",\"required\":false,\"picklist\":null}",
+          "textValue": "SALES-001"
+        },
+        {
+          "fieldName": "{\"name\":\"companySize\",\"type\":\"NUMBER_FIELD\",\"required\":true,\"picklist\":null}",
+          "numberValue": 500
+        },
+        {
+          "fieldName": "{\"name\":\"leadSource\",\"type\":\"PICKLIST\",\"required\":false,\"picklist\":{\"id\":15}}",
+          "picklistValue": "WEBSITE"
+        },
+        {
+          "fieldName": "{\"name\":\"isVip\",\"type\":\"BOOLEAN_FIELD\",\"required\":false,\"picklist\":null}",
+          "booleanValue": true
+        },
+        {
+          "fieldName": "{\"name\":\"lastContactDate\",\"type\":\"DATE_FIELD\",\"required\":false,\"picklist\":null}",
+          "dateValue": "2024-01-15T10:30:00.000Z"
+        }
+      ]
+    }
+  },
+
+  "final_request_body": {
+    "description": "What gets sent to POST /v1/leads after processing",
+    "firstName": "John",
+    "lastName": "Doe",
+    "departmentCode": "SALES-001",
+    "companySize": 500,
+    "leadSource": "WEBSITE",
+    "isVip": true,
+    "lastContactDate": "2024-01-15T10:30:00.000Z"
+  },
+
+  "processing_logic": {
+    "description": "How the preSend function processes the data",
+    "steps": [
+      "1. Loop through customFields.customField array",
+      "2. For each field, parse the JSON metadata from fieldName",
+      "3. Extract the actual field name and type from metadata",
+      "4. Based on type, select the appropriate value (textValue, numberValue, etc.)",
+      "5. Add the field to request body using the actual field name",
+      "6. Skip empty/undefined values"
+    ]
+  },
+
+  "field_type_handling": {
+    "TEXT_FIELD": "Uses textValue (string input)",
+    "NUMBER_FIELD": "Uses numberValue (number input)",
+    "DATE_FIELD": "Uses dateValue (dateTime picker)",
+    "BOOLEAN_FIELD": "Uses booleanValue (checkbox)",
+    "PICKLIST": "Uses picklistValue (dropdown with API options)",
+    "EMAIL_FIELD": "Uses textValue (string input)",
+    "URL_FIELD": "Uses textValue (string input)",
+    "TEXTAREA_FIELD": "Uses textValue (string input)"
+  }
+}

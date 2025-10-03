@@ -1,0 +1,63 @@
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "address": "123 Main St",
+  "city": "New York",
+  "companyAddress": "456 Business Ave",
+  "companyAnnualRevenue": 1000000,
+  "companyCity": "New York",
+  "companyName": "Acme Corp",
+  "companyPhones": [
+    {
+      "value": "1234567890",
+      "code": "US",
+      "dialCode": "+1",
+      "primary": true,
+      "type": "WORK"
+    }
+  ],
+  "companyState": "NY",
+  "companyWebsite": "https://acme.com",
+  "companyZipcode": "10001",
+  "department": "Sales",
+  "designation": "Manager",
+  "dnd": false,
+  "emails": [
+    {
+      "value": "john.doe@acme.com",
+      "primary": true,
+      "type": "OFFICE"
+    }
+  ],
+  "expectedClosureOn": "2024-12-31T23:59:59.000Z",
+  "facebook": "john.doe.fb",
+  "linkedIn": "john-doe-linkedin",
+  "phoneNumbers": [
+    {
+      "code": "US",
+      "dialCode": "+1",
+      "value": "9876543210",
+      "primary": true,
+      "type": "MOBILE"
+    }
+  ],
+  "requirementName": "CRM Software",
+  "state": "NY",
+  "subSource": "Website",
+  "twitter": "@johndoe",
+  "utmCampaign": "summer2024",
+  "utmContent": "banner",
+  "utmMedium": "email",
+  "utmSource": "newsletter",
+  "utmTerm": "crm software",
+  "zipcode": "10001",
+  
+  "_comment": "Custom fields loaded dynamically from API",
+  "departmentCode": "SALES-001",
+  "customScore": 85,
+  "lastContactDate": "2024-01-15T10:30:00.000Z",
+  "isVip": true,
+  "leadSource": "WEBSITE",
+  "priority": "HIGH",
+  "customNotes": "Important client from enterprise segment"
+}
