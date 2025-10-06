@@ -613,7 +613,7 @@ export async function kylasApiRequest(
 
 	try {
 		const credentialType = 'kylasApi';
-		const responseData = await this.helpers.requestWithAuthentication.call(
+		const responseData = await this.helpers.httpRequestWithAuthentication.call(
 			this,
 			credentialType,
 			options,
