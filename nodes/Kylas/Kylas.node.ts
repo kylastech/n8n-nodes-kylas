@@ -458,7 +458,7 @@ async function searchLeads(this: IExecuteFunctions, itemIndex: number): Promise<
 async function getUser(this: IExecuteFunctions, itemIndex: number): Promise<IDataObject> {
 	const userId = this.getNodeParameter('userId', itemIndex) as string;
 	const response = await kylasApiRequest.call(this, 'GET', `/v1/users/${userId}`, {});
-	return JSON.parse(response.data as string) ;
+	return response.data as IDataObject;
 }
 
 // Company operation functions
@@ -570,7 +570,7 @@ export async function getCachedSystemFields(this: IHookFunctions | IExecuteFunct
 
 	// Cache is expired or doesn't exist, fetch fresh data
 	const customFields = await kylasApiRequest.call(this, 'GET', '/v1/layouts/leads/system-fields?view=create', {});
-	const responseData = JSON.parse(customFields.data as string);
+	const responseData = customFields.data;
 
 	// API returns a direct array of field objects
 	if (!Array.isArray(responseData)) {
@@ -619,10 +619,10 @@ export async function kylasApiRequest(
 			options,
 		);
 
-
 		if (responseData && responseData.success === false) {
 			throw new NodeApiError(this.getNode(), responseData as JsonObject);
 		}
+		
 		return {
 			data: responseData
 		};

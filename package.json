@@ -30,8 +30,7 @@
     "prepublishOnly": "n8n-node prerelease",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
-    "test:integration": "node test/integration.test.js"
+    "test:coverage": "jest --coverage"
   },
   "files": [
     "dist",
