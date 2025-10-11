@@ -284,7 +284,7 @@ async function updateLead(this: IExecuteFunctions, itemIndex: number): Promise<I
 	const leadId = this.getNodeParameter('leadId', itemIndex) as string;
 	const updateFields = this.getNodeParameter('updateFields', itemIndex, {}) as IDataObject;
 	const customFields = this.getNodeParameter('customFields.customField', itemIndex, []) as Array<{
-		fieldName: string;
+		name: string;
 		value: string;
 	}>;
 
@@ -321,10 +321,10 @@ async function updateLead(this: IExecuteFunctions, itemIndex: number): Promise<I
 	// Process new/updated custom fields with proper type handling
 	if (customFields.length > 0) {
 		customFields.forEach(field => {
-			if (field.fieldName) {
+			if (field.name) {
 				try {
 					// Parse field metadata to get the actual field name and type
-					const fieldMetadata = JSON.parse(field.fieldName);
+					const fieldMetadata = JSON.parse(field.name);
 					const fieldName = fieldMetadata.name;
 					const fieldType = fieldMetadata.type;
 
@@ -374,7 +374,7 @@ async function updateLead(this: IExecuteFunctions, itemIndex: number): Promise<I
 					// If JSON parsing fails, treat fieldName as the actual field name (backward compatibility)
 					console.warn('Failed to parse field metadata, using fieldName directly:', error);
 					if (field.value !== undefined && field.value !== '' && field.value !== null) {
-						(body.customFieldValues as IDataObject)[field.fieldName] = field.value;
+						(body.customFieldValues as IDataObject)[field.name] = field.value;
 					}
 				}
 			}
@@ -517,39 +517,6 @@ function populateSearchRequestBody(this: IExecuteFunctions, itemIndex: number, b
 	}
 }
 
-// Utility function to get lead custom fields as Fields type
-export async function getLeadCustomFieldsAsFields(context: IHookFunctions | IExecuteFunctions | ILoadOptionsFunctions): Promise<Fields> {
-	const fieldsData = await getCachedSystemFields.call(context);
-
-	// Ensure fieldsData is an array before calling filter
-	if (!Array.isArray(fieldsData)) {
-		console.error('Expected fieldsData to be an array, got:', typeof fieldsData, fieldsData);
-		throw new ApplicationError('Invalid fields data: expected an array');
-	}
-
-	const filteredFields = fieldsData
-		.filter(field => field.active
-			&& field.standard === false
-			&& field.type !== 'LOOK_UP'
-			&& field.type !== 'MULTI_PICKLIST'
-			&& field.type !== 'PICK_LIST'
-		)
-		.map(field => ({
-			name: field.name,
-			displayName: field.displayName,
-			type: field.type,
-			required: field.required || false,
-			standard: field.standard || false,
-			internal: field.internal || false
-		}));
-
-	const result: Fields = {
-		fields: filteredFields
-	};
-
-	return result;
-}
-
 let systemFieldsCache: RawFieldData[] | null = null;
 let cacheTimestamp: number = 0;
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
@@ -562,7 +529,6 @@ export function clearSystemFieldsCache(): void {
 
 export async function getCachedSystemFields(this: IHookFunctions | IExecuteFunctions | ILoadOptionsFunctions): Promise<RawFieldData[]> {
 	const now = Date.now();
-
 	// Check if cache is valid (not expired)
 	if (systemFieldsCache && (now - cacheTimestamp) < CACHE_DURATION) {
 		return systemFieldsCache;
@@ -571,7 +537,7 @@ export async function getCachedSystemFields(this: IHookFunctions | IExecuteFunct
 	// Cache is expired or doesn't exist, fetch fresh data
 	const customFields = await kylasApiRequest.call(this, 'GET', '/v1/layouts/leads/system-fields?view=create', {});
 	const responseData = customFields.data;
-
+		
 	// API returns a direct array of field objects
 	if (!Array.isArray(responseData)) {
 		console.error('Expected API to return an array of fields, got:', typeof responseData, responseData);
