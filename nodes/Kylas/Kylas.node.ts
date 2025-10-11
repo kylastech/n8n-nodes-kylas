@@ -84,7 +84,6 @@ export class Kylas implements INodeType {
 			async getLeadCustomFields(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
 				const returnData: INodePropertyOptions[] = [];
 				const fields = await getCachedSystemFields.call(this);
-				// console.log('Fields:', fields);
 				// Ensure fields is an array before calling filter
 				if (!Array.isArray(fields)) {
 					return returnData; // Return empty array instead of throwing
@@ -534,7 +533,6 @@ export async function getCachedSystemFields(this: IHookFunctions | IExecuteFunct
 	if (systemFieldsCache && (now - cacheTimestamp) < CACHE_DURATION) {
 		return systemFieldsCache;
 	}
-	console.log('Custom fields data:', systemFieldsCache);
 
 	// Cache is expired or doesn't exist, fetch fresh data
 	const customFields = await kylasApiRequest.call(this, 'GET', '/v1/layouts/leads/system-fields?view=create', {});
