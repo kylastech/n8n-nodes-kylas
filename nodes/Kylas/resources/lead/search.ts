@@ -58,7 +58,7 @@ export const leadSearchDescription: INodeProperties[] = [
 				showAdvancedOptions: [true],
 			},
 		},
-		default: '{\n  "condition": "AND",\n  "rules": [\n    {\n      "operator": "equal",\n      "id": "country",\n      "field": "country",\n      "type": "long",\n      "value": 175\n    },\n    {\n      "operator": "contains",\n      "id": "firstName",\n      "field": "firstName",\n      "type": "string",\n      "value": "abc"\n    }\n  ],\n  "valid": true\n}',
+		default: '{\n  "condition": "AND",\n  "rules": [\n    {\n      "operator": "contains",\n      "id": "firstName",\n      "field": "firstName",\n      "type": "string",\n      "value": "n8n"\n    }\n    ],\n  "valid": true\n}',
 		description: 'JSON rule object for filtering leads. Supports complex AND conditions. Available operators: equal, not_equal, contains, not_contains, greater_than, less_than, between, in, not_in. Field types: string, long, double, date.',
 	},
 ];

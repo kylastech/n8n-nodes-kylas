@@ -26,10 +26,10 @@ export const customFieldsUpdateDescription: INodeProperties[] = [
                 values: [
                     {
                         displayName: 'Field Name or ID',
-                        name: "fieldName",
+                        name: "name",
                         type: "options",
                         typeOptions: {
-                            loadOptionsMethod: 'getAvailableCustomFields',
+                            loadOptionsMethod: 'getLeadCustomFields',
                             loadOptionsDependsOn: ['customFields.customField'],
                         },
                         default: '',
