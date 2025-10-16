@@ -16,7 +16,8 @@ import {
 	NodeOperationError,
 	JsonObject,
 	INodeExecutionData,
-	ApplicationError
+	ApplicationError,
+	LoggerProxy
 } from 'n8n-workflow';
 
 import { version } from '../../package.json'
@@ -84,7 +85,7 @@ export class Kylas implements INodeType {
 			async getLeadCustomFields(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
 				const returnData: INodePropertyOptions[] = [];
 				const fields = await getCachedSystemFields.call(this);
-				// console.log('Fields:', fields);
+				// LoggerProxy.debug('Fields:', fields);
 				// Ensure fields is an array before calling filter
 				if (!Array.isArray(fields)) {
 					return returnData; // Return empty array instead of throwing
@@ -139,9 +140,9 @@ export class Kylas implements INodeType {
 				}
 
 				if (Array.isArray(responseData)) {
-					returnData.push(...responseData.map(item => ({ json: item })));
+					returnData.push(...responseData.map(item => ({ json: item, pairedItem: { item: i } })));
 				} else {
-					returnData.push({ json: responseData });
+					returnData.push({ json: responseData, pairedItem: { item: i } });
 				}
 			} catch (error) {
 				if (this.continueOnFail()) {
@@ -220,7 +221,7 @@ async function createLead(this: IExecuteFunctions, itemIndex: number): Promise<I
 
 					// Validate field type
 					if (!isValidFieldType(fieldType)) {
-						console.warn(`Invalid field type: ${fieldType}, skipping field`);
+						LoggerProxy.warn(`Invalid field type: ${fieldType}, skipping field`);
 						return; // Skip this field
 					}
 
@@ -233,7 +234,7 @@ async function createLead(this: IExecuteFunctions, itemIndex: number): Promise<I
 						case 'NUMBER':
 							processedValue = parseFloat(field.value);
 							if (isNaN(processedValue)) {
-								console.warn(`Invalid number value for ${fieldName}: ${field.value}`);
+								LoggerProxy.warn(`Invalid number value for ${fieldName}: ${field.value}`);
 								return;
 							}
 							break;
@@ -243,7 +244,7 @@ async function createLead(this: IExecuteFunctions, itemIndex: number): Promise<I
 							if (field.value && !isNaN(Date.parse(field.value))) {
 								processedValue = field.value;
 							} else if (field.value) {
-								console.warn(`Invalid date value for ${fieldName}: ${field.value}`);
+								LoggerProxy.warn(`Invalid date value for ${fieldName}: ${field.value}`);
 								return;
 							}
 							break;
@@ -258,7 +259,7 @@ async function createLead(this: IExecuteFunctions, itemIndex: number): Promise<I
 					}
 				} catch (error) {
 					// If JSON parsing fails, treat fieldName as the actual field name (backward compatibility)
-					console.warn('Failed to parse field metadata, using fieldName directly:', error);
+					LoggerProxy.warn('Failed to parse field metadata, using fieldName directly:', error);
 					if (field.value !== undefined && field.value !== '' && field.value !== null) {
 						(body.customFieldValues as IDataObject)[field.name] = field.value;
 					}
@@ -331,7 +332,7 @@ async function updateLead(this: IExecuteFunctions, itemIndex: number): Promise<I
 
 					// Validate field type
 					if (!isValidFieldType(fieldType)) {
-						console.warn(`Invalid field type: ${fieldType}, skipping field`);
+						LoggerProxy.warn(`Invalid field type: ${fieldType}, skipping field`);
 						return; // Skip this field
 					}
 
@@ -343,7 +344,7 @@ async function updateLead(this: IExecuteFunctions, itemIndex: number): Promise<I
 						case 'NUMBER':
 							processedValue = parseFloat(field.value);
 							if (isNaN(processedValue)) {
-								console.warn(`Invalid number value for ${fieldName}: ${field.value}`);
+								LoggerProxy.warn(`Invalid number value for ${fieldName}: ${field.value}`);
 								return;
 							}
 							break;
@@ -353,7 +354,7 @@ async function updateLead(this: IExecuteFunctions, itemIndex: number): Promise<I
 							if (field.value && !isNaN(Date.parse(field.value))) {
 								processedValue = field.value;
 							} else if (field.value) {
-								console.warn(`Invalid date value for ${fieldName}: ${field.value}`);
+								LoggerProxy.warn(`Invalid date value for ${fieldName}: ${field.value}`);
 								return;
 							}
 							break;
@@ -373,7 +374,7 @@ async function updateLead(this: IExecuteFunctions, itemIndex: number): Promise<I
 					}
 				} catch (error) {
 					// If JSON parsing fails, treat fieldName as the actual field name (backward compatibility)
-					console.warn('Failed to parse field metadata, using fieldName directly:', error);
+					LoggerProxy.warn('Failed to parse field metadata, using fieldName directly:', error);
 					if (field.value !== undefined && field.value !== '' && field.value !== null) {
 						(body.customFieldValues as IDataObject)[field.name] = field.value;
 					}
@@ -534,7 +535,7 @@ export async function getCachedSystemFields(this: IHookFunctions | IExecuteFunct
 	if (systemFieldsCache && (now - cacheTimestamp) < CACHE_DURATION) {
 		return systemFieldsCache;
 	}
-	console.log('Custom fields data:', systemFieldsCache);
+	// LoggerProxy.debug('Custom fields data:', { systemFieldsCache });
 
 	// Cache is expired or doesn't exist, fetch fresh data
 	const customFields = await kylasApiRequest.call(this, 'GET', '/v1/layouts/leads/system-fields?view=create', {});
@@ -542,7 +543,7 @@ export async function getCachedSystemFields(this: IHookFunctions | IExecuteFunct
 		
 	// API returns a direct array of field objects
 	if (!Array.isArray(responseData)) {
-		console.error('Expected API to return an array of fields, got:', typeof responseData, responseData);
+		LoggerProxy.error('Expected API to return an array of fields, got:', { type: typeof responseData, responseData });
 		throw new ApplicationError('Invalid API response: expected an array of field objects');
 	}
 
