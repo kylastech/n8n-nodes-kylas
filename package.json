@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-kylas",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "n8n community node to work with Kylas CRM API - lead management, sales automation, and customer relationship management",
   "license": "MIT",
   "homepage": "https://github.com/kylastech/n8n-nodes-kylas",
